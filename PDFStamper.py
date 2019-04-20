@@ -1,27 +1,39 @@
-# PDFStamper
-# An automated Python 3.7 script to stamp PDFs with watermark and batch numbers
-# (c) Carlos Vieites - 2019 - All rights reserved
-# Permision is given for commercial use at all BTG plc facilities
+"""
+PDFStamper v1.0 alpha
+An automated Python 3.7 script to stamp PDFs with watermark and batch numbers
+(c) Carlos Vieites - 2019 - All rights reserved
+Permision is given for commercial use in all BTG plc facilities
+"""
 
 # Import libraries
 import os
-import time
+import datetime
 import easygui
 import numpy as np
 import pandas as pd
 from selenium import webdriver
 import subprocess
-import shutil
 import io
 import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+import time
 # (unused, future?) from PyPDF2 import PdfFileReader
 # (unused, future?) from reportlab.lib import colors
 # (unused, future?) from reportlab.pdfbase.ttfonts import TTFont
+# (unused, future? copying files) import shutil
 
-# User to input file
+# Welcome message
+print('Welcome to PDFStamper v1.0 alpha (testing).')
+print('\n')
+print('This program will stamp a data integrity watermark and will add')
+print('a batch number to the PDF you enter in a spreadsheet.')
+print('(c) Carlos Vieites - 2019 - All rights reserved')
+print('Permision is given for commercial use in all BTG plc facilities')
+print('\n')
+
+# User to input file Excel file
 userpath = easygui.fileopenbox()
 print('Loading request file:')
 print(userpath)
@@ -72,8 +84,9 @@ if os.listdir(temppath) != []:
         os.remove(temppath + fileName)
 
 # Download files from SSL Proquis using Chromedriver
+print('\n')
 print('Downloading files from Proquis. Authenticate if required.')
-
+t0 = time.time()
 chrome_options = webdriver.ChromeOptions()
 preferences = {"download.default_directory": 'C:\pdfstampertemp',
                "directory_upgrade": True,
@@ -88,20 +101,32 @@ urllist = downloadlist
 for x in range(len(downloadlist)):
     urllist[x] = url + str(downloadlist[x])
     driver.get(urllist[x])
+    print('Downloading: ', downloadlist[x]),
 
-print('Download completed!')
+# Wait for the download to complete (specially for large PDFs)
+x1 = 0
+while x1 == 0:
+    count = 0
+    li = os.listdir(temppath)
+    for x1 in li:
+        if x1.endswith(".crdownload"):
+            count = count + 1
+            print('{} seconds'.format(int(time.time() - t0)), end='\r')
+    if count == 0:
+        x1 = 1
+    else:
+        x1 = 0
+
 print('\n')
-time.sleep(1)
+elapsedtime = int(time.time() - t0)
+print('Download completed in', str(datetime.timedelta(seconds=elapsedtime)))
+print('\n')
 driver.quit()
 
 # Decrypt downloaded PDFs
 # Copy qpdf to temp directory
 print('Preparing PDFs ...')
 print('\n')
-qpdffiles = ['qpdf.exe','qpdf21.dll','libwinpthread-1.dll','libstdc++-6.dll','libiconv2.dll','libgcc_s_dw2-1.dll']
-
-for x in range(len(qpdffiles)):
-    shutil.copy2(qpdffiles[x], 'c://pdfstampertemp/' + qpdffiles[x])
 
 # Change cwd to decrypt
 installdir = os.getcwd()
@@ -114,7 +139,9 @@ for x in range(len(downloadlist)):
     downloadlist[x] = downloadlist[x] + '.PDF'
     workinglist[x] = 'D' + downloadlist[x]
     subprocess.run(["qpdf.exe", "--decrypt", downloadlist[x], workinglist[x]])
-print('Ready! Stamping now. This may take some time according with the PDF size. Please wait...')
+    # os.remove(temppath + downloadlist[x])   (slows down the script)
+print('Ready! Stamping now.')
+print ('This may take a while according with the size of the PDF. Please wait...')
 print('\n')
 
 # Set the cwd back to the install directory
@@ -273,8 +300,16 @@ for i in range(1, len(inputpdf)):
         pdfWriter.write(resultPdfFile)
         inputfile.close()
         resultPdfFile.close()
+
 print("Stamping has completed.")
 print('\n')
 print('Script terminated. Have a nice day!')
 print('\n')
-input("Press any key to exit...")
+
+# Ask user to open folder with resulting
+text = input("Press ENTER to open the folder, any other key to exit")
+if text == "":
+    path = os.path.realpath("c://pdfstampertemp")
+    os.startfile(path)
+else:
+    exit()
