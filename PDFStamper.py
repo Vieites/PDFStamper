@@ -5,7 +5,7 @@ import numpy as np
 userpath = easygui.fileopenbox()
 print('Loading request file:')
 print(userpath)
-print ('\n')
+print('\n')
 
 # Read excel file document with 4 columns: Document, Batch Number, Prints, Duplex
 import pandas as pd
@@ -34,12 +34,12 @@ print(df)
 
 downloadlist = np.unique(list)
 
-print ('\n')
+print('\n')
 print('Your request contains', len(documentlist['Document']), 'documents, of which, ')
 print(len(downloadlist), ' are unique (no repeats) to be retrieved from Proquis: ')
-print ('\n')
+print('\n')
 print(downloadlist)
-print ('\n')
+print('\n')
 
 import os, time, selenium
 
@@ -75,7 +75,7 @@ for x in range(len(downloadlist)):
     driver.get(urllist[x])
 
 print('Download completed!')
-print ('\n')
+print('\n')
 time.sleep(1)
 driver.quit()
 
@@ -86,11 +86,11 @@ import subprocess
 import shutil
 
 # Copy qpdf to temp directory
-print ('Preparing PDFs ...')
+print('Preparing PDFs ...')
 qpdffiles = ['qpdf.exe','qpdf21.dll','libwinpthread-1.dll','libstdc++-6.dll','libiconv2.dll','libgcc_s_dw2-1.dll']
 
 for x in range(len(qpdffiles)):
-    shutil.copy2(qpdffiles[x], 'c://pdfstampertemp/'+ qpdffiles[x])
+    shutil.copy2(qpdffiles[x], 'c://pdfstampertemp/' + qpdffiles[x])
 
 # Change cwd to decrypt
 installdir = os.getcwd()
@@ -100,21 +100,21 @@ os.chdir('c://pdfstampertemp/')
 workinglist = np.unique(list)
 downloadlist = np.unique(list)
 for x in range(len(downloadlist)):
-    downloadlist [x] = downloadlist [x] + '.PDF'
+    downloadlist[x] = downloadlist[x] + '.PDF'
     workinglist[x] = 'D' + downloadlist[x]
     subprocess.run(["qpdf.exe", "--decrypt", downloadlist[x], workinglist[x]])
 print('Ready! Stamping now. This may take some time according with the PDF size. Please wait...')
-print ('\n')
+print('\n')
 
 # Set the cwd back to the install directory
 os.chdir(installdir)
 
 # Order the file list by batch number
-df=df.sort_values('BatchNo')
+df = df.sort_values('BatchNo')
 
 # Prep: declare variables and create first stamp headers
-inputpdf= 'D'+df['Document']+'.PDF'
-outputpdf = 'SD'+ df['Document']+'.PDF'
+inputpdf = 'D'+df['Document']+'.PDF'
+outputpdf = 'SD' + df['Document']+'.PDF'
 batchno = df['BatchNo']
 copies = df['Copies']
 duplex = df['Single/Double']
@@ -142,7 +142,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 # Portrait: create a new PDF with Reportlab, insert the text in set location with specified font
 packet = io.BytesIO()
 can = canvas.Canvas(packet, pagesize=A4)
-can.setFont('Times-Bold',16)
+can.setFont('Times-Bold', 16)
 can.drawString(xp, yp, batch)
 can.save()
 
@@ -164,7 +164,7 @@ outputStream.close()
 # Landscape: create a new PDF with Reportlab, insert the text in set location with specified font
 packet = io.BytesIO()
 can = canvas.Canvas(packet, pagesize=A4)
-can.setFont('Times-Bold',16)
+can.setFont('Times-Bold', 16)
 can.drawString(xl, yl, batch)
 can.save()
 
@@ -185,9 +185,9 @@ outputStream.close()
 
 # Watermark the first PDF
 import PyPDF2
-from PyPDF2  import PdfFileReader
-input = temppath + inputpdf[0]
-inputfile = open(input, 'rb')
+from PyPDF2 import PdfFileReader
+initialf = temppath + inputpdf[0]
+inputfile = open(initialf, 'rb')
 pdfReader = PyPDF2.PdfFileReader(inputfile)
 
 pdfWriter = PyPDF2.PdfFileWriter()
@@ -196,20 +196,20 @@ for pageNum in range(pdfReader.numPages):
     inputfilePage = pdfReader.getPage(pageNum)
     page = pdfReader.getPage(pageNum).mediaBox
     if (page.getUpperRight_x() - page.getUpperLeft_x()) > (page.getUpperRight_y() - page.getLowerRight_y()):
-        stamp ='StampL.pdf'
+        stamp = 'StampL.pdf'
     else:
         stamp = 'StampP.pdf'
     pdfWatermarkReader = PyPDF2.PdfFileReader(open(stamp, 'rb'))
     inputfilePage.mergePage(pdfWatermarkReader.getPage(0))
     pdfWriter.addPage(inputfilePage)
-resultPdfFile = open(str(temppath + '0'+ outputpdf[0]), 'wb')
+resultPdfFile = open(str(temppath + '0' + outputpdf[0]), 'wb')
 pdfWriter.write(resultPdfFile)
 inputfile.close()
 resultPdfFile.close()
 
 # Rest of the files - create new stamp only if needed
 
-for i in range(1,len(inputpdf)):
+for i in range(1, len(inputpdf)):
         if batchno[i] != batchno[i-1]:
             # Portrait: create a new PDF with Reportlab, insert the text in set location with specified font
             packet = io.BytesIO()
@@ -256,8 +256,8 @@ for i in range(1,len(inputpdf)):
             outputStream.close()
 
         # Stamp them
-        input = temppath + inputpdf[i]
-        inputfile = open(input, 'rb')
+        initialf = temppath + inputpdf[i]
+        inputfile = open(initialf, 'rb')
         pdfReader = PyPDF2.PdfFileReader(inputfile)
 
         pdfWriter = PyPDF2.PdfFileWriter()
@@ -276,19 +276,6 @@ for i in range(1,len(inputpdf)):
         pdfWriter.write(resultPdfFile)
         inputfile.close()
         resultPdfFile.close()
-print ("Stamping has completed.")
-print ('Script terminated. Have a nice day!')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print("Stamping has completed.")
+print('Script terminated. Have a nice day!')
+input("Press any key to exit...")
