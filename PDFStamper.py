@@ -1,12 +1,11 @@
 """
-PDFStamper v1.0 alpha
-An automated Python 3.7 script to stamp PDFs with watermark and batch numbers
+PDFStamper v1.1 alpha
+An automated Python 3.7 script to stamp PDFs with a watermark and batch numbers
 (c) Carlos Vieites - 2019 - All rights reserved
-Permision is given for commercial use in all BTG plc facilities
 """
-
 # Import libraries
 import os
+import time
 import datetime
 import easygui
 import numpy as np
@@ -18,19 +17,18 @@ import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-import time
-# (unused, future?) from PyPDF2 import PdfFileReader
 # (unused, future?) from reportlab.lib import colors
 # (unused, future?) from reportlab.pdfbase.ttfonts import TTFont
 # (unused, future? copying files) import shutil
 
 # Welcome message
-print('Welcome to PDFStamper v1.0 alpha (testing).')
+print('Welcome to PDFStamper v1.1 alpha (testing).')
 print('\n')
 print('This program will stamp a data integrity watermark and will add')
 print('a batch number to the PDF you enter in a spreadsheet.')
+print('\n')
 print('(c) Carlos Vieites - 2019 - All rights reserved')
-print('Permision is given for commercial use in all BTG plc facilities')
+print('Permision is granted for commercial use in all BTG plc facilities')
 print('\n')
 
 # User to input file Excel file
@@ -39,7 +37,7 @@ print('Loading request file:')
 print(userpath)
 print('\n')
 
-# Read excel file document with 4 columns: Document, Batch Number, Prints, Duplex
+# Read excel file with 4 columns: Document, Batch Number, Prints, Duplex
 documentlist = pd.read_excel(userpath, usecols='A,B,C,D')
 df = pd.DataFrame(documentlist)
 
@@ -53,23 +51,23 @@ pd.options.mode.chained_assignment = None
 value = 'FAR'
 df['Document'] = df['Document'].astype(str)
 
-list = df['Document']
+workinglist = df['Document']
 
-for x in range(len(list)):
-    if value not in list[x]:
-        list[x] = 'FAR-BR-02.' + str(list[x])
+for x in range(len(workinglist)):
+    if value not in workinglist[x]:
+        workinglist[x] = str('FAR-BR-02.' + (workinglist[x]))
     else:
         continue
 
-df['Document'] = list
+df['Document'] = workinglist
 print(df)
-downloadlist = np.unique(list)
+workinglist = np.unique(workinglist)
 
 print('\n')
 print('Your request contains', len(documentlist['Document']), 'documents, of which, ')
-print(len(downloadlist), ' are unique (no repeats) to be retrieved from Proquis: ')
+print(len(workinglist), ' are unique (no repeats) to be retrieved from Proquis: ')
 print('\n')
-print(downloadlist)
+print(workinglist)
 print('\n')
 
 # Prep a temp folder for downloads
@@ -97,19 +95,20 @@ driver = webdriver.Chrome(chrome_options=chrome_options,
                           executable_path=r'chromedriver.exe')
 
 url = 'https://proquis.btgplc.com/viewdocument.aspx?DOCNO='
-urllist = downloadlist
-for x in range(len(downloadlist)):
-    urllist[x] = url + str(downloadlist[x])
-    driver.get(urllist[x])
-    print('Downloading: ', downloadlist[x]),
+urllist = workinglist
 
+for x in range(len(urllist)):
+    urllist[x] = str(url + workinglist[x])
+    driver.get(urllist[x])
+    print('Downloading: ', workinglist[x]),
+    time.sleep(0.5)
 # Wait for the download to complete (specially for large PDFs)
 x1 = 0
 while x1 == 0:
     count = 0
     li = os.listdir(temppath)
     for x1 in li:
-        if x1.endswith(".crdownload"):
+        if x1.endswith(".crdownload") or x1.endswith(".tmp"):
             count = count + 1
             print('{} seconds'.format(int(time.time() - t0)), end='\r')
     if count == 0:
@@ -122,194 +121,139 @@ elapsedtime = int(time.time() - t0)
 print('Download completed in', str(datetime.timedelta(seconds=elapsedtime)))
 print('\n')
 driver.quit()
+workinglist = np.unique(df['Document']) + '.PDF'
 
 # Decrypt downloaded PDFs
-# Copy qpdf to temp directory
 print('Preparing PDFs ...')
 print('\n')
 
-# Change cwd to decrypt
-installdir = os.getcwd()
-os.chdir('c://pdfstampertemp/')
-
+# Decrypt files
 # Call qpdf to decrypt pdfs
-workinglist = np.unique(list)
-downloadlist = np.unique(list)
-for x in range(len(downloadlist)):
-    downloadlist[x] = downloadlist[x] + '.PDF'
-    workinglist[x] = 'D' + downloadlist[x]
-    subprocess.run(["qpdf.exe", "--decrypt", downloadlist[x], workinglist[x]])
+for x in range(len(workinglist)):
+    subprocess.run(["qpdf.exe", "--decrypt", (temppath + workinglist[x]), (temppath + 'D' + workinglist[x])])
+    workinglist[x] = 'D' + workinglist[x]
     # os.remove(temppath + downloadlist[x])   (slows down the script)
 print('Ready! Stamping now.')
-print ('This may take a while according with the size of the PDF. Please wait...')
+print('This may take a while according with the size of the PDF. Please wait...')
 print('\n')
-
-# Set the cwd back to the install directory
-os.chdir(installdir)
 
 # Order the file list by batch number
 df = df.sort_values('BatchNo')
 
-# Prep: declare variables and create first stamp headers
-inputpdf = 'D'+df['Document']+'.PDF'
-outputpdf = 'SD' + df['Document']+'.PDF'
+
+# Inject batch number in already watermarked blank Portrait and Landscape PDFs
+def insertbn(font_type, font_size, xp, yp, xl, yl, batch):
+    # Portrait
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=A4)
+    can.setFont(font_type, font_size)
+    can.drawString(xp, yp, batch)
+    can.save()
+    # move to the beginning of the StringIO buffer
+    packet.seek(0)
+    new_pdf = PdfFileReader(packet)
+    # read the existing PDF
+    existing_pdf = PdfFileReader(open("BlankStampP.pdf", "rb"))
+    output = PdfFileWriter()
+    # add the "watermark" (which is the new pdf) on the existing page
+    page = existing_pdf.getPage(0)
+    page.mergePage(new_pdf.getPage(0))
+    output.addPage(page)
+    # finally, write "output" to a real file
+    outputStream = open("StampP.pdf", "wb")
+    output.write(outputStream)
+    outputStream.close()
+    #
+    # Landscape
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=A4)
+    can.setFont(font_type, font_size)
+    can.drawString(xl, yl, batch)
+    can.save()
+    # move to the beginning of the StringIO buffer
+    packet.seek(0)
+    new_pdf = PdfFileReader(packet)
+    # read the existing PDF
+    existing_pdf = PdfFileReader(open("BlankStampL.pdf", "rb"))
+    output = PdfFileWriter()
+    # add the "watermark" (which is the new pdf) on the existing page
+    page = existing_pdf.getPage(0)
+    page.mergePage(new_pdf.getPage(0))
+    output.addPage(page)
+    # finally, write "output" to a real file
+    outputStream = open("StampL.pdf", "wb")
+    output.write(outputStream)
+    outputStream.close()
+    return
+
+
+# Stamper engine (merge numbered blank PDF stamps with decrypted inputed PDF)
+def Stamper(infile, outfile):
+    inputfile = open(infile, 'rb')
+    pdfReader = PyPDF2.PdfFileReader(inputfile)
+    pdfWriter = PyPDF2.PdfFileWriter()
+    for pageNum in range(pdfReader.numPages):
+        inputfilePage = pdfReader.getPage(pageNum)
+        page = pdfReader.getPage(pageNum).mediaBox
+        if (page.getUpperRight_x() - page.getUpperLeft_x()) > (page.getUpperRight_y() - page.getLowerRight_y()):
+            stamp = 'StampL.pdf'
+        else:
+            stamp = 'StampP.pdf'
+        pdfWatermarkReader = PyPDF2.PdfFileReader(open(stamp, 'rb'))
+        inputfilePage.mergePage(pdfWatermarkReader.getPage(0))
+        pdfWriter.addPage(inputfilePage)
+    resultPdfFile = open(outfile, 'wb')
+    pdfWriter.write(resultPdfFile)
+    inputfile.close()
+    resultPdfFile.close()
+    return
+
+
+# Stamp decrypted PDFs with batch numbers
+# Prepare the list of documents to the full excel list
+outputlist = 'SD' + df['Document'] + '.PDF'
+workinglist = 'D' + df['Document'] + '.PDF'
 batchno = df['BatchNo']
 copies = df['Copies']
 duplex = df['Single/Double']
+
+# Prep: declare variables to be used to create stamps form blank watermarked
 stamp = ['StampP.pdf', 'StampL.pdf']
+font_type = 'Times-Bold'
+font_size = 16
+
 # Bach number position in page Portrait and Landscape (x,y)
 xp = 400
 yp = 780
 xl = 640
 yl = 530
 
-# Create inital stapms for first entry
-batch = str(batchno[1])
+# Stamp first PDF
+inputpdf = temppath + workinglist[0]
+outputpdf = temppath + outputlist[0]
+insertbn(font_type, font_size, xp, yp, xl, yl, str(batchno[0]))
+Stamper(inputpdf, outputpdf)
+print(outputlist[0], ' - Done!')
 
-# Portrait: create a new PDF with Reportlab, insert the text in set location with specified font
-packet = io.BytesIO()
-can = canvas.Canvas(packet, pagesize=A4)
-can.setFont('Times-Bold', 16)
-can.drawString(xp, yp, batch)
-can.save()
+# Stamp the rest of the PDFs
+looprange = (len(workinglist)) - 1
+for x in range(looprange):
+    inputpdf = temppath + workinglist[x + 1]
+    outputpdf = temppath + outputlist[x + 1]
+    insertbn(font_type, font_size, xp, yp, xl, yl, str(batchno[x + 1]))
+    Stamper(inputpdf, outputpdf)
+    print(outputlist[x + 1], ' - Done!')
 
-# move to the beginning of the StringIO buffer
-packet.seek(0)
-new_pdf = PdfFileReader(packet)
-# read the existing PDF
-existing_pdf = PdfFileReader(open("BlankStampP.pdf", "rb"))
-output = PdfFileWriter()
-# add the "watermark" (which is the new pdf) on the existing page
-page = existing_pdf.getPage(0)
-page.mergePage(new_pdf.getPage(0))
-output.addPage(page)
-# finally, write "output" to a real file
-outputStream = open("StampP.pdf", "wb")
-output.write(outputStream)
-outputStream.close()
-
-# Landscape: create a new PDF with Reportlab, insert the text in set location with specified font
-packet = io.BytesIO()
-can = canvas.Canvas(packet, pagesize=A4)
-can.setFont('Times-Bold', 16)
-can.drawString(xl, yl, batch)
-can.save()
-
-# move to the beginning of the StringIO buffer
-packet.seek(0)
-new_pdf = PdfFileReader(packet)
-# read the existing PDF
-existing_pdf = PdfFileReader(open("BlankStampL.pdf", "rb"))
-output = PdfFileWriter()
-# add the "watermark" (which is the new pdf) on the existing page
-page = existing_pdf.getPage(0)
-page.mergePage(new_pdf.getPage(0))
-output.addPage(page)
-# finally, write "output" to a real file
-outputStream = open("StampL.pdf", "wb")
-output.write(outputStream)
-outputStream.close()
-
-# Watermark the first PDF
-initialf = temppath + inputpdf[0]
-inputfile = open(initialf, 'rb')
-pdfReader = PyPDF2.PdfFileReader(inputfile)
-
-pdfWriter = PyPDF2.PdfFileWriter()
-
-for pageNum in range(pdfReader.numPages):
-    inputfilePage = pdfReader.getPage(pageNum)
-    page = pdfReader.getPage(pageNum).mediaBox
-    if (page.getUpperRight_x() - page.getUpperLeft_x()) > (page.getUpperRight_y() - page.getLowerRight_y()):
-        stamp = 'StampL.pdf'
-    else:
-        stamp = 'StampP.pdf'
-    pdfWatermarkReader = PyPDF2.PdfFileReader(open(stamp, 'rb'))
-    inputfilePage.mergePage(pdfWatermarkReader.getPage(0))
-    pdfWriter.addPage(inputfilePage)
-resultPdfFile = open(str(temppath + '0' + outputpdf[0]), 'wb')
-pdfWriter.write(resultPdfFile)
-inputfile.close()
-resultPdfFile.close()
-
-# Rest of the files - create new stamp only if needed
-for i in range(1, len(inputpdf)):
-    if batchno[i] != batchno[i-1]:
-        # Portrait: create a new PDF with Reportlab, insert the text in set location with specified font
-        packet = io.BytesIO()
-        can = canvas.Canvas(packet, pagesize=A4)
-        can.setFont('Times-Bold', 16)
-        can.drawString(xp, yp, str(batchno[i]))
-        can.save()
-
-        # move to the beginning of the StringIO buffer
-        packet.seek(0)
-        new_pdf = PdfFileReader(packet)
-        # read the existing PDF
-        existing_pdf = PdfFileReader(open("BlankStampP.pdf", "rb"))
-        output = PdfFileWriter()
-        # add the "watermark" (which is the new pdf) on the existing page
-        page = existing_pdf.getPage(0)
-        page.mergePage(new_pdf.getPage(0))
-        output.addPage(page)
-        # finally, write "output" to a real file
-        outputStream = open("StampP.pdf", "wb")
-        output.write(outputStream)
-        outputStream.close()
-
-        # Landscape: create a new PDF with Reportlab, insert the text in set location with specified font
-        packet = io.BytesIO()
-        can = canvas.Canvas(packet, pagesize=A4)
-        can.setFont('Times-Bold', 16)
-        can.drawString(xl, yl, str(batchno[i]))
-        can.save()
-
-        # move to the beginning of the StringIO buffer
-        packet.seek(0)
-        new_pdf = PdfFileReader(packet)
-        # read the existing PDF
-        existing_pdf = PdfFileReader(open("BlankStampL.pdf", "rb"))
-        output = PdfFileWriter()
-        # add the "watermark" (which is the new pdf) on the existing page
-        page = existing_pdf.getPage(0)
-        page.mergePage(new_pdf.getPage(0))
-        output.addPage(page)
-        # finally, write "output" to a real file
-        outputStream = open("StampL.pdf", "wb")
-        output.write(outputStream)
-        outputStream.close()
-
-        # Stamp them
-        initialf = temppath + inputpdf[i]
-        inputfile = open(initialf, 'rb')
-        pdfReader = PyPDF2.PdfFileReader(inputfile)
-
-        pdfWriter = PyPDF2.PdfFileWriter()
-
-        for pageNum in range(pdfReader.numPages):
-            inputfilePage = pdfReader.getPage(pageNum)
-            page = pdfReader.getPage(pageNum).mediaBox
-            if (page.getUpperRight_x() - page.getUpperLeft_x()) > (page.getUpperRight_y() - page.getLowerRight_y()):
-                stamp = 'StampL.pdf'
-            else:
-                stamp = 'StampP.pdf'
-            pdfWatermarkReader = PyPDF2.PdfFileReader(open(stamp, 'rb'))
-            inputfilePage.mergePage(pdfWatermarkReader.getPage(0))
-            pdfWriter.addPage(inputfilePage)
-        resultPdfFile = open(str(temppath + str(i) + outputpdf[i]), 'wb')
-        pdfWriter.write(resultPdfFile)
-        inputfile.close()
-        resultPdfFile.close()
-
+# Goodbye message
+print('\n')
 print("Stamping has completed.")
 print('\n')
 print('Script terminated. Have a nice day!')
 print('\n')
-
 # Ask user to open folder with resulting
 text = input("Press ENTER to open the folder, any other key to exit")
 if text == "":
-    path = os.path.realpath("c://pdfstampertemp")
+    path = os.path.realpath(temppath)
     os.startfile(path)
 else:
     exit()
