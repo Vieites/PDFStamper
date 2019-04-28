@@ -1,5 +1,5 @@
 """
-PDFStamper v1.1 alpha
+PDFStamper v1.2 alpha
 An automated Python 3.7 script to stamp PDFs with a watermark and batch numbers
 (c) Carlos Vieites - 2019 - All rights reserved
 """
@@ -17,15 +17,17 @@ import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+import win32api
+import win32print
 # (unused, future?) from reportlab.lib import colors
 # (unused, future?) from reportlab.pdfbase.ttfonts import TTFont
 # (unused, future? copying files) import shutil
 
 # Welcome message
-print('Welcome to PDFStamper v1.1 alpha (testing).')
+print('Welcome to PDFStamper v1.2 alpha (testing).')
 print('\n')
 print('This program will stamp a data integrity watermark and will add')
-print('a batch number to the PDF you enter in a spreadsheet.')
+print('the batch number to the PDF you enter from an Excel spreadsheet.')
 print('\n')
 print('(c) Carlos Vieites - 2019 - All rights reserved')
 print('Permision is granted for commercial use in all BTG plc facilities')
@@ -33,7 +35,7 @@ print('\n')
 
 # User to input file Excel file
 userpath = easygui.fileopenbox()
-print('Loading request file:')
+print('Enter request MS Excel file:')
 print(userpath)
 print('\n')
 
@@ -50,15 +52,12 @@ pd.options.mode.chained_assignment = None
 # Convert numeric values to string type FAR-BR-02.XXX
 value = 'FAR'
 df['Document'] = df['Document'].astype(str)
-
 workinglist = df['Document']
-
 for x in range(len(workinglist)):
     if value not in workinglist[x]:
         workinglist[x] = str('FAR-BR-02.' + (workinglist[x]))
     else:
         continue
-
 df['Document'] = workinglist
 print(df)
 workinglist = np.unique(workinglist)
@@ -96,12 +95,13 @@ driver = webdriver.Chrome(chrome_options=chrome_options,
 
 url = 'https://proquis.btgplc.com/viewdocument.aspx?DOCNO='
 urllist = workinglist
-
 for x in range(len(urllist)):
     urllist[x] = str(url + workinglist[x])
     driver.get(urllist[x])
     print('Downloading: ', workinglist[x]),
-    time.sleep(0.5)
+    # Chromedriver does not work if time is not given to process the 1st job
+    if x == 0:
+        time.sleep(3)
 # Wait for the download to complete (specially for large PDFs)
 x1 = 0
 while x1 == 0:
@@ -209,6 +209,30 @@ def Stamper(infile, outfile):
     return
 
 
+# Print function with Duplex selection
+def printpdf(infile, setduplex):
+    name = win32print.GetDefaultPrinter()
+    # printdefaults = {"DesiredAccess": win32print.PRINTER_ACCESS_ADMINISTER}
+    printdefaults = {"DesiredAccess": win32print.PRINTER_ACCESS_USE}
+    handle = win32print.OpenPrinter(name, printdefaults)
+    level = 2
+    attributes = win32print.GetPrinter(handle, level)
+    # print "Old Duplex = %d" % attributes['pDevMode'].Duplex
+    # attributes['pDevMode'].Duplex = 1    no flip (single sided)
+    # attributes['pDevMode'].Duplex = 2       flip up
+    # attributes['pDevMode'].Duplex = 3       flip over (doble sided)
+    attributes['pDevMode'].Duplex = setduplex
+    # 'SetPrinter' fails because of 'Access is denied.'
+    # But the attribute 'Duplex' is set correctly
+    try:
+        win32print.SetPrinter(handle, level, attributes, 0)
+    except:
+        print('win32print.SetPrinter: set Duplex')
+    res = win32api.ShellExecute(0, 'print', infile, None, '.', 0)
+    win32print.ClosePrinter(handle)
+    return
+
+
 # Stamp decrypted PDFs with batch numbers
 # Prepare the list of documents to the full excel list
 outputlist = 'SD' + df['Document'] + '.PDF'
@@ -230,7 +254,8 @@ yl = 530
 
 # Stamp first PDF
 inputpdf = temppath + workinglist[0]
-outputpdf = temppath + outputlist[0]
+outputpdf = temppath + '0' + outputlist[0]
+workinglist[0] = outputpdf
 insertbn(font_type, font_size, xp, yp, xl, yl, str(batchno[0]))
 Stamper(inputpdf, outputpdf)
 print(outputlist[0], ' - Done!')
@@ -239,16 +264,36 @@ print(outputlist[0], ' - Done!')
 looprange = (len(workinglist)) - 1
 for x in range(looprange):
     inputpdf = temppath + workinglist[x + 1]
-    outputpdf = temppath + outputlist[x + 1]
-    insertbn(font_type, font_size, xp, yp, xl, yl, str(batchno[x + 1]))
+    outputpdf = temppath + str(x+1) + outputlist[x + 1]
+    workinglist[x+1] = outputpdf
+    # Only create new batchno stamp for new numbers, otherwise use existing
+    if (batchno[x+1] != batchno[x]):
+        insertbn(font_type, font_size, xp, yp, xl, yl, str(batchno[x + 1]))
     Stamper(inputpdf, outputpdf)
     print(outputlist[x + 1], ' - Done!')
 
-# Goodbye message
 print('\n')
 print("Stamping has completed.")
 print('\n')
-print('Script terminated. Have a nice day!')
+
+# Send to the printer
+looprange = looprange + 1
+for x in range(looprange):
+    print('Printing ', workinglist[x])
+    outputpdf = workinglist[x]
+    if duplex[x] == 'S' or 's':
+        setduplex = 1
+    else:
+        setduplex = 2
+    nocopies = int(copies[x])
+    for k in range(nocopies):
+        printpdf(outputpdf, setduplex)
+
+# Goodbye message
+print('\n')
+print('Documents sent to the printer.')
+print('\n')
+print('All done. - Script terminated. Have a nice day!')
 print('\n')
 # Ask user to open folder with resulting
 text = input("Press ENTER to open the folder, any other key to exit")
