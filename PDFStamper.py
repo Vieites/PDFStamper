@@ -284,7 +284,7 @@ for x in range(looprange):
     if duplex[x] == 'S' or 's':
         setduplex = 1
     else:
-        setduplex = 2
+        setduplex = 3
     nocopies = int(copies[x])
     for k in range(nocopies):
         printpdf(outputpdf, setduplex)
