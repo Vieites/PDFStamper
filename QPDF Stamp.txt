@@ -1,0 +1,1 @@
+qpdf --overlay stamp.pdf --repeat=1-z -- test.pdf carlos222.pdf

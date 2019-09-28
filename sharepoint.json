@@ -1,0 +1,84 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared Documents/Document Control/Documentation Centre/Special Instructions/SI-19-0033 Manufacture of experimental oxygen canisters.pdf')",
+                    "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')",
+                    "type": "SP.File"
+                },
+                "Author": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/Author"
+                    }
+                },
+                "CheckedOutByUser": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/CheckedOutByUser"
+                    }
+                },
+                "EffectiveInformationRightsManagementSettings": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/EffectiveInformationRightsManagementSettings"
+                    }
+                },
+                "InformationRightsManagementSettings": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/InformationRightsManagementSettings"
+                    }
+                },
+                "ListItemAllFields": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/ListItemAllFields"
+                    }
+                },
+                "LockedByUser": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/LockedByUser"
+                    }
+                },
+                "ModifiedBy": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/ModifiedBy"
+                    }
+                },
+                "Properties": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/Properties"
+                    }
+                },
+                "VersionEvents": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/VersionEvents"
+                    }
+                },
+                "Versions": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-19-0033%20Manufacture%20of%20experimental%20oxygen%20canisters.pdf')/Versions"
+                    }
+                },
+                "CheckInComment": "",
+                "CheckOutType": 2,
+                "ContentTag": "{316BB06C-B2FC-40E8-921C-78D62AEFFBE9},2,2",
+                "CustomizedPageStatus": 0,
+                "ETag": "\"{316BB06C-B2FC-40E8-921C-78D62AEFFBE9},2\"",
+                "Exists": true,
+                "IrmEnabled": false,
+                "Length": "3504293",
+                "Level": 2,
+                "LinkingUri": null,
+                "LinkingUrl": "",
+                "MajorVersion": 0,
+                "MinorVersion": 1,
+                "Name": "SI-19-0033 Manufacture of experimental oxygen canisters.pdf",
+                "ServerRelativeUrl": "/sites/QA-Farnham/Shared Documents/Document Control/Documentation Centre/Special Instructions/SI-19-0033 Manufacture of experimental oxygen canisters.pdf",
+                "TimeCreated": "2019-09-24T14:52:18Z",
+                "TimeLastModified": "2019-09-24T14:52:21Z",
+                "Title": null,
+                "UIVersion": 1,
+                "UIVersionLabel": "0.1",
+                "UniqueId": "316bb06c-b2fc-40e8-921c-78d62aeffbe9"
+            }
+        ]
+    }
+}
