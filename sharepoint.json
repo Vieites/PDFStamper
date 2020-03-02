@@ -1,0 +1,84 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared Documents/Document Control/Documentation Centre/Special Instructions/SI-20-0003 Trial of modified filler air purge  set-up.pdf')",
+                    "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')",
+                    "type": "SP.File"
+                },
+                "Author": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/Author"
+                    }
+                },
+                "CheckedOutByUser": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/CheckedOutByUser"
+                    }
+                },
+                "EffectiveInformationRightsManagementSettings": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/EffectiveInformationRightsManagementSettings"
+                    }
+                },
+                "InformationRightsManagementSettings": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/InformationRightsManagementSettings"
+                    }
+                },
+                "ListItemAllFields": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/ListItemAllFields"
+                    }
+                },
+                "LockedByUser": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/LockedByUser"
+                    }
+                },
+                "ModifiedBy": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/ModifiedBy"
+                    }
+                },
+                "Properties": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/Properties"
+                    }
+                },
+                "VersionEvents": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/VersionEvents"
+                    }
+                },
+                "Versions": {
+                    "__deferred": {
+                        "uri": "https://btggroup.sharepoint.com/sites/QA-Farnham/_api/Web/GetFileByServerRelativePath(decodedurl='/sites/QA-Farnham/Shared%20Documents/Document%20Control/Documentation%20Centre/Special%20Instructions/SI-20-0003%20Trial%20of%20modified%20filler%20air%20purge%20%20set-up.pdf')/Versions"
+                    }
+                },
+                "CheckInComment": "",
+                "CheckOutType": 2,
+                "ContentTag": "{3F690CE4-D15F-41CF-9CD6-AF5466A97F42},4,2",
+                "CustomizedPageStatus": 0,
+                "ETag": "\"{3F690CE4-D15F-41CF-9CD6-AF5466A97F42},4\"",
+                "Exists": true,
+                "IrmEnabled": false,
+                "Length": "3165260",
+                "Level": 1,
+                "LinkingUri": null,
+                "LinkingUrl": "",
+                "MajorVersion": 2,
+                "MinorVersion": 0,
+                "Name": "SI-20-0003 Trial of modified filler air purge  set-up.pdf",
+                "ServerRelativeUrl": "/sites/QA-Farnham/Shared Documents/Document Control/Documentation Centre/Special Instructions/SI-20-0003 Trial of modified filler air purge  set-up.pdf",
+                "TimeCreated": "2020-02-04T10:18:43Z",
+                "TimeLastModified": "2020-02-04T10:19:38Z",
+                "Title": null,
+                "UIVersion": 1024,
+                "UIVersionLabel": "2.0",
+                "UniqueId": "3f690ce4-d15f-41cf-9cd6-af5466a97f42"
+            }
+        ]
+    }
+}

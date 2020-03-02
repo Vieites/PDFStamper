@@ -58,7 +58,7 @@ EnableTeXEnhancements = false
 DefaultDisplayMode = automatic
 DefaultZoom = fit page
 WindowState = 1
-WindowPos = 416 0 811 1050
+WindowPos = 1485 15 811 1050
 ShowToc = true
 SidebarDx = 0
 TocDy = 0
@@ -67,20 +67,40 @@ UseTabs = true
 
 FileStates [
 	[
-		FilePath = C:\pdfstampertemp\3SDFAR-BR-02.003-F20.PDF
+		FilePath = C:\pdfstampertemp\SI-19-0026.PDF
 		Favorites [
 		]
 		IsPinned = false
 		IsMissing = false
-		OpenCount = 1
+		OpenCount = 2
 		UseDefaultState = false
 		DisplayMode = continuous
-		ScrollPos = -1 365
-		PageNo = 9
+		ScrollPos = -1 -1
+		PageNo = 1
 		Zoom = fit page
 		Rotation = 0
 		WindowState = 1
-		WindowPos = 416 0 811 1050
+		WindowPos = 1485 15 811 1050
+		ShowToc = false
+		SidebarDx = 0
+		DisplayR2L = false
+		ReparseIdx = 0
+	]
+	[
+		FilePath = C:\pdfstampertemp\0SDSI-19-0026.PDF
+		Favorites [
+		]
+		IsPinned = false
+		IsMissing = false
+		OpenCount = 3
+		UseDefaultState = false
+		DisplayMode = continuous
+		ScrollPos = -1 -1
+		PageNo = 1
+		Zoom = fit page
+		Rotation = 0
+		WindowState = 1
+		WindowPos = 1485 15 811 1050
 		ShowToc = false
 		SidebarDx = 0
 		DisplayR2L = false
@@ -106,10 +126,30 @@ FileStates [
 		DisplayR2L = false
 		ReparseIdx = 0
 	]
+	[
+		FilePath = C:\pdfstampertemp\3SDFAR-BR-02.003-F20.PDF
+		Favorites [
+		]
+		IsPinned = false
+		IsMissing = true
+		OpenCount = 0
+		UseDefaultState = false
+		DisplayMode = continuous
+		ScrollPos = -1 365
+		PageNo = 9
+		Zoom = fit page
+		Rotation = 0
+		WindowState = 1
+		WindowPos = 416 0 811 1050
+		ShowToc = false
+		SidebarDx = 0
+		DisplayR2L = false
+		ReparseIdx = 0
+	]
 ]
 SessionData [
 ]
 TimeOfLastUpdateCheck = 0 0
-OpenCountWeek = 441
+OpenCountWeek = 454
 
 # Settings after this line have not been recognized by the current version
