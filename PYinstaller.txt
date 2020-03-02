@@ -1,0 +1,4 @@
+pyinstaller -F --ico=PDFStamper.ico PDFStamper17.py  (one file, works slow, does not work with Sharepy to download from SharePoint)
+
+
+pyinstaller --ico=PDFStamper.ico PDFStamper17.py    (uncompressed, work with SharePoint, remember to copy library folder sharepy)
